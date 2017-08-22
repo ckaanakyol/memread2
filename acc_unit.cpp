@@ -41,6 +41,10 @@ private:
 	    	int addr = index_array[cycle];
 	    	Port_MemAddr.write(addr);
 	    }
+	    else
+	    {
+	    	Port_MemAddr.write(INT_MIN);
+	    }
     }
 
     void receive()
