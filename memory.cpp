@@ -13,6 +13,7 @@ public:
         SC_METHOD(execute);
         sensitive << Port_CLK;
         m_data = new int[MEM_SIZE];
+        fill(m_data);
         m_curAddr = 0;
         m_curData = 0;
         fifo_num = -1;
@@ -27,12 +28,18 @@ private:
     int m_curData;
     int fifo_num;
 
+    void fill(int* m_data)
+    {
+    	for(int i = 0 ; i < MEM_SIZE; i++)
+    		m_data[i]=i;
+    }
+
 	void execute()
 	{
     	m_curAddr = Mem_Addr.read();
 		Mem_Data.write(m_data[m_curAddr]);
-    	Fifo_NumToAr.write(fifo_num);
         fifo_num = Fifo_Num.read();
+        Fifo_NumToAr.write(fifo_num);
 	}
 
 };
