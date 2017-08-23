@@ -4,8 +4,8 @@ SC_MODULE(Acc_Unit)
 {
 public:
 	sc_in<bool> Port_CLK{"Port_CLK"};
-	sc_out<int> Port_MemAddr{"Port_MemAddr"};
-    sc_in<int> Port_MemData{"Port_MemData"};
+	sc_out<int> AU_Addr{"AU_Addr"};
+    sc_in<int> AU_InData{"AU_InData"};
     sc_in<int> AU_num{"AU_num"};
 
     SC_HAS_PROCESS(Acc_Unit);
@@ -29,7 +29,7 @@ private:
 
 	bool decideToSend()
 	{
-		if(rand() % 4  == 0)
+		if(rand() % 3== 0)
 			return true;
 		else false;
 	}
@@ -39,11 +39,14 @@ private:
     	if(decideToSend())
     	{
 	    	int addr = index_array[cycle];
-	    	Port_MemAddr.write(addr);
+	    	AU_Addr.write(addr);
+	    	cout<<"AU-" <<order<< " sent address: " <<addr <<endl;
+	    	cycle++;
 	    }
 	    else
 	    {
-	    	Port_MemAddr.write(INT_MIN);
+	    	cout<<"AU-" <<order<< " not sent address: " <<endl;
+	    	AU_Addr.write(INT_MIN);
 	    }
     }
 
@@ -51,14 +54,14 @@ private:
     {
     	if(AU_num.read() == order)
     	{
-    		cout<<"AU-"<<order << " read value: "<< Port_MemData.read()<<endl;
+    		cout<<"AU-"<<order << " read value: "<< AU_InData.read()<<endl;
     	}
     }
 
     void fillIndexArray(int* index_array)
     {
     	for(int i = 0; i < INDEX_ARRAY_SIZE; i++)
-    		index_array[i] = i;
+    		index_array[i] = i+1;
     		//index_array[i] = rand() % MEM_SIZE;
     }
 

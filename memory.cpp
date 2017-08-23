@@ -4,9 +4,10 @@ SC_MODULE(Memory)
 {
 public:
 	sc_in<bool> Port_CLK{"CLK"};
-	sc_in<int> Port_Addr{"addr"};
-	sc_inout<int> Port_Data{"data"};
-	sc_inout<int> Fifo_Num{"fifo_Num"};
+	sc_in<int> Mem_Addr{"addr"};
+	sc_out<int> Mem_Data{"data"};
+	sc_in<int> Fifo_Num{"fifo_Num"};
+	sc_out<int> Fifo_NumToAr{"Fifo_NumToAr"};
 	SC_CTOR(Memory)
     {
         SC_METHOD(execute);
@@ -28,10 +29,9 @@ private:
 
 	void execute()
 	{
-		Port_Data.write(m_data[m_curAddr]);
-    	Fifo_Num.write(fifo_num);
-    	m_curAddr = Port_Addr.read();
-        m_curData = Port_Data.read();
+    	m_curAddr = Mem_Addr.read();
+		Mem_Data.write(m_data[m_curAddr]);
+    	Fifo_NumToAr.write(fifo_num);
         fifo_num = Fifo_Num.read();
 	}
 
