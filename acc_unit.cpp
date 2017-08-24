@@ -40,12 +40,12 @@ private:
     	{
 	    	int addr = index_array[cycle];
 	    	AU_Addr.write(addr);
-	    	cout<<"AU-" <<order<< " sent address: " <<addr <<endl;
+	    	//cout<<"AU-" <<order<< " sent address: " <<addr <<endl;
 	    	cycle++;
 	    }
 	    else
 	    {
-	    	cout<<"AU-" <<order<< " not sent address." <<endl;
+	    	//cout<<"AU-" <<order<< " not sent address." <<endl;
 	    	AU_Addr.write(INT_MIN);
 	    }
     }
@@ -54,8 +54,10 @@ private:
     {
     	if(AU_num.read() == order)
     	{
-    		//cout<<"AU-"<<order << " read value: "<< AU_InData.read()<<endl;
+    		cout<<"AU-"<<order << " read value: "<< AU_InData.read()<<endl;
     	}
+    	if(AU_num.read() == -1 && AU_InData.read() == INT_MIN)
+    		sc_stop();
     }
 
     void fillIndexArray(int* index_array)

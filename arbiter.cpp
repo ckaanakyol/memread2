@@ -42,12 +42,12 @@ private:
 		if(Port_Addr2.read() != INT_MIN && !isFirstCycle) { values2.push(Port_Addr2.read()) ;} 
 		if(Port_Addr3.read() != INT_MIN && !isFirstCycle) { values3.push(Port_Addr3.read()) ;}
 
-		cout << endl<<values0.size() << " " << values1.size() << " " << values2.size() << " " << values3.size() << " " <<endl;
+		//cout << endl<<values0.size() << " " << values1.size() << " " << values2.size() << " " << values3.size() << " " <<endl;
 		//cout <<values0.front() << " " << values1.front() << " " << values2.front() << " " << values3.front() << " " <<endl;
 		if(values0.size() > 0)
 		{
 			Sent_Addr.write(values0.front());
-			cout<< "Arbite-0 addr: " << values0.front() << endl;
+			//cout<< "Arbite-0 addr: " << values0.front() << endl;
 			values0.pop();
 			Ar_FifoNumToMem.write(0);
 
@@ -55,34 +55,51 @@ private:
 		else if(values1.size() > 0)
 		{
 			Sent_Addr.write(values1.front());
-			cout<< "Arbite-1 addr: " << values1.front() << endl;
+			//cout<< "Arbite-1 addr: " << values1.front() << endl;
 			values1.pop();
 			Ar_FifoNumToMem.write(1);
 		}
 		else if(values2.size() > 0)
 		{
 			Sent_Addr.write(values2.front());
-			cout<< "Arbite-2 addr: " << values2.front() << endl;
+			//cout<< "Arbite-2 addr: " << values2.front() << endl;
 			values2.pop();
 			Ar_FifoNumToMem.write(2);
 		}
 		else if(values3.size() > 0)
 		{
 			Sent_Addr.write(values3.front());
-			cout<< "Arbite-3 addr: " << values3.front() << endl;
+			//cout<< "Arbite-3 addr: " << values3.front() << endl;
 			values3.pop();
 			Ar_FifoNumToMem.write(3);
 		}
-		cout <<values0.size() << " " << values1.size() << " " << values2.size() << " " << values3.size() << " " <<endl;
+		else if(!isFirstCycle)
+		{
+			Sent_Addr.write(INT_MIN);
+			Ar_FifoNumToMem.write(-1);
+		}
+		//cout <<values0.size() << " " << values1.size() << " " << values2.size() << " " << values3.size() << " " <<endl;
 		isFirstCycle = false;
+
+		
+
 	}
 
 	void getData()
 	{	
 		int data = Ar_InData.read();
 		int fifo_order = Ar_InFifoNum.read();
-		Ar_FifoNumToAU.write(fifo_order);
-		Ar_OutData.write(data);
-		cout<< "Arbiter fifo_order: " << fifo_order << " data: " << data <<  endl; 
+		if(data == INT_MIN && fifo_order == -1)
+		{
+			Ar_FifoNumToAU.write(-1);
+			Ar_OutData.write(INT_MIN);
+		}
+		else
+		{
+			Ar_FifoNumToAU.write(fifo_order);
+			Ar_OutData.write(data);
+			//cout<< "Arbiter fifo_order: " << fifo_order << " data: " << data <<  endl; 
+		}
+		
 	}
 };

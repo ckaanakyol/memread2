@@ -37,11 +37,20 @@ private:
 	void execute()
 	{
     	m_curAddr = Mem_Addr.read();
-		Mem_Data.write(m_data[m_curAddr]);
         fifo_num = Fifo_Num.read();
-        Fifo_NumToAr.write(fifo_num);
 
-        cout<< "Mem - Addr: " << m_curAddr << " fifo_num: " << fifo_num << endl;
+        if(m_curAddr == INT_MIN && fifo_num == -1)
+        {
+        	Mem_Data.write(INT_MIN);
+	        Fifo_NumToAr.write(-1);
+        }
+        else
+        {
+			Mem_Data.write(m_data[m_curAddr]);
+	        Fifo_NumToAr.write(fifo_num);
+        	cout<< "Mem - Addr: " << m_curAddr << " fifo_num: " << fifo_num << endl;
+        }
+
 	}
 
 };
