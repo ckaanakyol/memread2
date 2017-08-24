@@ -28,7 +28,6 @@ int sc_main(int argc, char* argv[])
 	sc_signal<int> fifonumtoar{"fifonumtoar"};
 	sc_clock clk;
 
-
 	acc0.AU_Addr(addr0);
 	acc1.AU_Addr(addr1);
 	acc2.AU_Addr(addr2);

@@ -12,7 +12,7 @@ public:
 	Acc_Unit(sc_module_name name, int ord=-1):sc_module(name), order(ord)
     {
     	SC_METHOD(send);
-    	sensitive << Port_CLK.neg();
+    	sensitive << Port_CLK;
     	SC_METHOD(receive);
     	sensitive << Port_CLK;
     	index_array = new int[INDEX_ARRAY_SIZE];
@@ -29,14 +29,14 @@ private:
 
 	bool decideToSend()
 	{
-		if(rand() % 3== 0)
+		if(rand() % 2== 0)
 			return true;
 		else false;
 	}
 
     void send()
     {
-    	if(decideToSend())
+    	if(decideToSend() && cycle < INDEX_ARRAY_SIZE)
     	{
 	    	int addr = index_array[cycle];
 	    	AU_Addr.write(addr);
@@ -45,7 +45,7 @@ private:
 	    }
 	    else
 	    {
-	    	cout<<"AU-" <<order<< " not sent address: " <<endl;
+	    	cout<<"AU-" <<order<< " not sent address." <<endl;
 	    	AU_Addr.write(INT_MIN);
 	    }
     }
@@ -54,14 +54,14 @@ private:
     {
     	if(AU_num.read() == order)
     	{
-    		cout<<"AU-"<<order << " read value: "<< AU_InData.read()<<endl;
+    		//cout<<"AU-"<<order << " read value: "<< AU_InData.read()<<endl;
     	}
     }
 
     void fillIndexArray(int* index_array)
     {
     	for(int i = 0; i < INDEX_ARRAY_SIZE; i++)
-    		index_array[i] = i+1;
+    		index_array[i] = i + order * 16;
     		//index_array[i] = rand() % MEM_SIZE;
     }
 

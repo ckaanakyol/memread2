@@ -14,18 +14,17 @@ public:
 	sc_out<int> Ar_FifoNumToAU{"Ar_FifoNumToAU"};
 	sc_in<int> Ar_InData{"Ar_InData"};
 	sc_in<int> Ar_InFifoNum{"Ar_InFifoNum"};
-	sc_out<int> Ar_OutData{"Ar_InData"};
+	sc_out<int> Ar_OutData{"Ar_OutData"};
 
 	SC_CTOR(Arbiter)
     {
-    	SC_METHOD(getAddrs);
-        sensitive << Port_CLK;
-
         SC_METHOD(arbite);
         sensitive << Port_CLK;
 
         SC_METHOD(getData);
         sensitive << Port_CLK;
+
+        isFirstCycle = true;
     }
     ~Arbiter() {  }
 
@@ -34,17 +33,17 @@ private:
 	std::queue <int> values1;
 	std::queue <int> values2;
 	std::queue <int> values3;
-
-	void getAddrs()
-	{
-		if(Port_Addr0.read() != INT_MIN) { values0.push(Port_Addr0.read()) ;} 
-		if(Port_Addr1.read() != INT_MIN) { values1.push(Port_Addr1.read()) ;} 
-		if(Port_Addr2.read() != INT_MIN) { values2.push(Port_Addr2.read()) ;} 
-		if(Port_Addr3.read() != INT_MIN) { values3.push(Port_Addr3.read()) ;}
-	}
+	bool isFirstCycle;
 
 	void arbite()
 	{
+		if(Port_Addr0.read() != INT_MIN && !isFirstCycle) { values0.push(Port_Addr0.read()) ;} 
+		if(Port_Addr1.read() != INT_MIN && !isFirstCycle) { values1.push(Port_Addr1.read()) ;} 
+		if(Port_Addr2.read() != INT_MIN && !isFirstCycle) { values2.push(Port_Addr2.read()) ;} 
+		if(Port_Addr3.read() != INT_MIN && !isFirstCycle) { values3.push(Port_Addr3.read()) ;}
+
+		cout << endl<<values0.size() << " " << values1.size() << " " << values2.size() << " " << values3.size() << " " <<endl;
+		//cout <<values0.front() << " " << values1.front() << " " << values2.front() << " " << values3.front() << " " <<endl;
 		if(values0.size() > 0)
 		{
 			Sent_Addr.write(values0.front());
@@ -74,14 +73,16 @@ private:
 			values3.pop();
 			Ar_FifoNumToMem.write(3);
 		}
+		cout <<values0.size() << " " << values1.size() << " " << values2.size() << " " << values3.size() << " " <<endl;
+		isFirstCycle = false;
 	}
 
 	void getData()
 	{	
-		int data = Ar_OutData.read();
+		int data = Ar_InData.read();
 		int fifo_order = Ar_InFifoNum.read();
 		Ar_FifoNumToAU.write(fifo_order);
 		Ar_OutData.write(data);
-		//cout<< "Arbiter fifo_order: " << fifo_order << endl; 
+		cout<< "Arbiter fifo_order: " << fifo_order << " data: " << data <<  endl; 
 	}
 };

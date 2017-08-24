@@ -40,6 +40,8 @@ private:
 		Mem_Data.write(m_data[m_curAddr]);
         fifo_num = Fifo_Num.read();
         Fifo_NumToAr.write(fifo_num);
+
+        cout<< "Mem - Addr: " << m_curAddr << " fifo_num: " << fifo_num << endl;
 	}
 
 };
